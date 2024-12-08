@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useUserUpdateRequest } from '@dynamic-labs/sdk-react-core';
+import Results from "../components/Results";
+
 
 import {
   Button,
@@ -42,6 +44,7 @@ export default function VoteFlow({ voter }) {
 
     fetchUsers();
   }, []);
+
 
   const submitVote = async () => {
     try {
@@ -105,9 +108,12 @@ export default function VoteFlow({ voter }) {
       gap={3}
     >
       {voted ? (
+        <>
         <Typography variant="h6" align="center" color="primary">
-          Thank you for voting!
+          Thank you for voting.
         </Typography>
+        <Results />
+        </>
       ) : (
         <>
           <Typography variant="h5" align="center">
