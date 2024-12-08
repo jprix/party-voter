@@ -4,17 +4,22 @@ import fs from "fs";
 
 export default function handler(req, res) {
   const filePath = path.join(process.cwd(), "data", "votes.json");
+  console.log(req.body);
 
   if (req.method === "POST") {
-    const { userId, maleVote, femaleVote } = req.body;
+    const { userId, maleVote, femaleVote, maleFirstName, femaleFirstName, voterFirstName } = req.body;
 
     const votes = JSON.parse(fs.readFileSync(filePath, "utf8"));
 
     votes.push({
-      userId, // This will now store the email
+      userId, 
       maleVote,
       femaleVote,
       timestamp: new Date().toISOString(),
+      maleFirstName,
+      femaleFirstName,
+      voterFirstName,
+
     });
 
     fs.writeFileSync(filePath, JSON.stringify(votes, null, 2), "utf8");

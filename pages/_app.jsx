@@ -3,6 +3,8 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import DynamicProviders from "../providers/DynamicProviders";
+import Header from '../components/Header';
+
 
 function MyApp({ Component, pageProps }) {
   // Define the theme
@@ -37,6 +39,7 @@ function MyApp({ Component, pageProps }) {
         }}
       >
         <DynamicProviders>
+          <Header />
           <Component {...pageProps} />
         </DynamicProviders>
       </Box>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useUserUpdateRequest } from '@dynamic-labs/sdk-react-core';
 import Results from "../components/Results";
+import { useDynamicContext, useIsLoggedIn } from "@dynamic-labs/sdk-react-core";
 
 
 import {
@@ -23,6 +24,7 @@ export default function VoteFlow({ voter }) {
   const [loading, setLoading] = useState(true);
   const { updateUser } = useUserUpdateRequest();
   const [voted, setVoted] = useState(false);
+    const { user } = useDynamicContext();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -48,27 +50,53 @@ export default function VoteFlow({ voter }) {
 
   const submitVote = async () => {
     try {
+      // Find the firstName of the selected male and female candidates
+      const maleCandidate = users.find((user) => user.email === maleVote);
+      const femaleCandidate = users.find((user) => user.email === femaleVote);
+  
+      // Prepare the payload with all required fields
+      const votePayload = {
+        userId: voter.email, // The logged-in user's email
+        maleVote: maleVote, // The email of the male vote
+        femaleVote: femaleVote, // The email of the female vote
+        maleFirstName: maleCandidate?.firstName || "Unknown", // Male candidate's first name
+        femaleFirstName: femaleCandidate?.firstName || "Unknown", // Female candidate's first name
+        voterFirstName: voter.firstName, // First name of the logged-in voter
+      };
+  
+      console.log("Submitting vote with payload:", votePayload);
+  
       const response = await fetch("/api/vote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: maleVote,
-          maleVote,
-          femaleVote,
-        }),
+        body: JSON.stringify(votePayload),
       });
-
+  
       if (!response.ok) throw new Error("Failed to submit vote");
       console.log("Vote submitted successfully");
       setOpenModal(false);
     } catch (error) {
       console.error("Error submitting vote:", error);
     } finally {
-      const updatedUser = await updateUser({ metadata: { voted: true } });
-      console.log("Updated user:", updatedUser);
-      setVoted(true);
+      try {
+        // Merge existing metadata with voted: true
+        const updatedMetadata = {
+          ...voter.metadata, // Spread existing metadata
+          voted: true, // Add/update the voted key
+        };
+  
+        // Update the user's metadata
+        const updatedUser = await updateUser({ metadata: updatedMetadata });
+        console.log("Updated user metadata:", updatedUser);
+  
+        setVoted(true); // Set the voted state to true
+      } catch (updateError) {
+        console.error("Error updating user metadata:", updateError);
+      }
     }
   };
+  
+  
 
   const modalStyle = {
     position: "absolute",
@@ -109,8 +137,8 @@ export default function VoteFlow({ voter }) {
     >
       {voted ? (
         <>
-        <Typography variant="h6" align="center" color="primary">
-          Thank you for voting.
+        <Typography variant="h5" align="center" color="primary">
+          Thank you for voting, {user.firstName}.
         </Typography>
         <Results />
         </>
@@ -121,40 +149,41 @@ export default function VoteFlow({ voter }) {
           </Typography>
 
           {/* Male Vote */}
-          <FormControl fullWidth>
-            <InputLabel id="male-vote-label">Best Male Costume</InputLabel>
-            <Select
-              labelId="male-vote-label"
-              value={maleVote}
-              onChange={(e) => setMaleVote(e.target.value)}
-            >
-              {users
-                .filter((user) => user.metadata?.Gender === "Male")
-                .map((user) => (
-                  <MenuItem key={user.email} value={user.email}>
-                    {user.email}
-                  </MenuItem>
-                ))}
-            </Select>
-          </FormControl>
+<FormControl fullWidth>
+  <InputLabel id="male-vote-label">Best Male Costume</InputLabel>
+  <Select
+    labelId="male-vote-label"
+    value={maleVote}
+    onChange={(e) => setMaleVote(e.target.value)}
+  >
+    {users
+      .filter((user) => user.metadata?.Gender === "Male")
+      .map((user) => (
+        <MenuItem key={user.email} value={user.email}>
+          {user.firstName || "Unknown"} | {user.email}
+        </MenuItem>
+      ))}
+  </Select>
+</FormControl>
 
-          {/* Female Vote */}
-          <FormControl fullWidth>
-            <InputLabel id="female-vote-label">Best Female Costume</InputLabel>
-            <Select
-              labelId="female-vote-label"
-              value={femaleVote}
-              onChange={(e) => setFemaleVote(e.target.value)}
-            >
-              {users
-                .filter((user) => user.metadata?.Gender === "Female")
-                .map((user) => (
-                  <MenuItem key={user.email} value={user.email}>
-                    {user.email}
-                  </MenuItem>
-                ))}
-            </Select>
-          </FormControl>
+{/* Female Vote */}
+<FormControl fullWidth>
+  <InputLabel id="female-vote-label">Best Female Costume</InputLabel>
+  <Select
+    labelId="female-vote-label"
+    value={femaleVote}
+    onChange={(e) => setFemaleVote(e.target.value)}
+  >
+    {users
+      .filter((user) => user.metadata?.Gender === "Female")
+      .map((user) => (
+        <MenuItem key={user.email} value={user.email}>
+          {user.firstName || "Unknown"} | {user.email}
+        </MenuItem>
+      ))}
+  </Select>
+</FormControl>
+
 
           <Button
             variant="contained"

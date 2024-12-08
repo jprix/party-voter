@@ -1,50 +1,20 @@
 [
   {
-    "userId": "parisijason@gmail.com",
-    "maleVote": "parisijason@gmail.com",
+    "userId": "jay@dynamic.xyz",
+    "maleVote": "juarbe2@msn.com",
     "femaleVote": "lparisi622@gmail.com",
-    "timestamp": "2024-12-08T03:10:33.527Z"
-  },
-  {
-    "userId": "parisijason@gmail.com",
-    "maleVote": "jp@gmail.com",
-    "femaleVote": "lparisi622@gmail.com",
-    "timestamp": "2024-12-08T03:12:05.482Z"
-  },
-  {
-    "userId": "parisijason@gmail.com",
-    "maleVote": "parisijason@gmail.com",
-    "femaleVote": "lparisi622@gmail.com",
-    "timestamp": "2024-12-08T03:12:11.380Z"
+    "timestamp": "2024-12-08T20:10:12.293Z",
+    "maleFirstName": "Marlon",
+    "femaleFirstName": "Unknown",
+    "voterFirstName": "JayDyna"
   },
   {
     "userId": "parisijason@gmail.com",
     "maleVote": "parisijason@gmail.com",
     "femaleVote": "lparisi622@gmail.com",
-    "timestamp": "2024-12-08T03:16:58.828Z"
-  },
-  {
-    "userId": "parisijason@gmail.com",
-    "maleVote": "parisijason@gmail.com",
-    "femaleVote": "lparisi622@gmail.com",
-    "timestamp": "2024-12-08T03:24:28.586Z"
-  },
-  {
-    "userId": "parisijason@gmail.com",
-    "maleVote": "parisijason@gmail.com",
-    "femaleVote": "lparisi622@gmail.com",
-    "timestamp": "2024-12-08T03:24:59.368Z"
-  },
-  {
-    "userId": "ty@dynamic.xyz",
-    "maleVote": "jp@dynamic.xyz",
-    "femaleVote": "lparisi622@gmail.com",
-    "timestamp": "2024-12-08T03:47:07.229Z"
-  },
-  {
-    "userId": "aaay@dynamic.xyz",
-    "maleVote": "jay@dynamic.xyz",
-    "femaleVote": "aliparisi622@gmail.com",
-    "timestamp": "2024-12-08T03:47:07.229Z"
+    "timestamp": "2024-12-08T20:21:08.661Z",
+    "maleFirstName": "Jay G",
+    "femaleFirstName": "Unknown",
+    "voterFirstName": "Jay G"
   }
 ]

@@ -19,6 +19,7 @@ export default function Results() {
         if (!response.ok) throw new Error("Failed to fetch results");
         const data = await response.json();
         setResults(data);
+        console.log("Results", data);
       } catch (error) {
         console.error("Error fetching results:", error);
       } finally {
@@ -26,33 +27,11 @@ export default function Results() {
       }
     };
 
-    fetchResults();
-  }, []);
-
-  useEffect(() => {
-    const fetchResults = async () => {
-      try {
-        const response = await fetch("/api/tally");
-        if (!response.ok) throw new Error("Failed to fetch results");
-        const data = await response.json();
-        setResults(data);
-      } catch (error) {
-        console.error("Error fetching results:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
     fetchResults(); // Fetch immediately
-    const interval = setInterval(fetchResults, 15000); // Poll every 5 seconds
-  
+    const interval = setInterval(fetchResults, 15000); // Poll every 15 seconds
+
     return () => clearInterval(interval); // Clean up interval on unmount
   }, []);
-  
-
-  const sortCategoryVotes = (categoryVotes) => {
-    return Object.entries(categoryVotes).sort((a, b) => b[1] - a[1]); // Sort descending by votes
-  };
 
   if (loading) {
     return (
@@ -75,6 +54,17 @@ export default function Results() {
       </Typography>
     );
   }
+
+  const sortCategoryVotes = (categoryVotes) => {
+    return Object.entries(categoryVotes)
+      .map(([email, details]) => ({
+        email,
+        firstName: details.firstName,
+        count: details.count,
+      }))
+      .sort((a, b) => b.count - a.count); // Sort descending by votes
+  };
+  
 
   const maleResults = sortCategoryVotes(results.male);
   const femaleResults = sortCategoryVotes(results.female);
@@ -99,7 +89,7 @@ export default function Results() {
               <Typography variant="h5" align="center" gutterBottom>
                 Best Male Costume
               </Typography>
-              {maleResults.map(([email, votes], index) => (
+              {maleResults.map(({ email, firstName, count }, index) => (
                 <Typography
                   key={email}
                   align="center"
@@ -110,7 +100,8 @@ export default function Results() {
                     color: index === 0 ? "#FFD700" : "#000", // Gold for 1st place
                   }}
                 >
-                  {index + 1}. {email}: {votes} {votes === 1 ? "vote" : "votes"}
+                  {index + 1}. {firstName} ({email}): {count}{" "}
+                  {count === 1 ? "vote" : "votes"}
                 </Typography>
               ))}
             </CardContent>
@@ -124,7 +115,7 @@ export default function Results() {
               <Typography variant="h5" align="center" gutterBottom>
                 Best Female Costume
               </Typography>
-              {femaleResults.map(([email, votes], index) => (
+              {femaleResults.map(({ email, firstName, count }, index) => (
                 <Typography
                   key={email}
                   align="center"
@@ -135,7 +126,8 @@ export default function Results() {
                     color: index === 0 ? "#FFD700" : "#000", // Gold for 1st place
                   }}
                 >
-                  {index + 1}. {email}: {votes} {votes === 1 ? "vote" : "votes"}
+                  {index + 1}. {firstName} ({email}): {count}{" "}
+                  {count === 1 ? "vote" : "votes"}
                 </Typography>
               ))}
             </CardContent>

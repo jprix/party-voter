@@ -14,11 +14,27 @@ export default function handler(req, res) {
       // Read votes from file
       const votes = JSON.parse(fs.readFileSync(filePath, "utf8"));
 
-      // Tally votes
+      // Tally votes with firstName
       const tally = votes.reduce(
         (acc, vote) => {
-          acc.male[vote.maleVote] = (acc.male[vote.maleVote] || 0) + 1;
-          acc.female[vote.femaleVote] = (acc.female[vote.femaleVote] || 0) + 1;
+          // Male tally
+          if (!acc.male[vote.maleVote]) {
+            acc.male[vote.maleVote] = {
+              firstName: vote.maleFirstName || "Unknown",
+              count: 0,
+            };
+          }
+          acc.male[vote.maleVote].count += 1;
+
+          // Female tally
+          if (!acc.female[vote.femaleVote]) {
+            acc.female[vote.femaleVote] = {
+              firstName: vote.femaleFirstName || "Unknown",
+              count: 0,
+            };
+          }
+          acc.female[vote.femaleVote].count += 1;
+
           return acc;
         },
         { male: {}, female: {} }
