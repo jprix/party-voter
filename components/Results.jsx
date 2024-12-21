@@ -3,14 +3,16 @@ import {
   Box,
   Typography,
   CircularProgress,
+  Tabs,
+  Tab,
   Card,
   CardContent,
-  Grid2,
 } from "@mui/material";
 
 export default function Results() {
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState(0); // 0 for Male, 1 for Female
 
   useEffect(() => {
     const fetchResults = async () => {
@@ -32,6 +34,20 @@ export default function Results() {
 
     return () => clearInterval(interval); // Clean up interval on unmount
   }, []);
+
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
+
+  const sortCategoryVotes = (categoryVotes) => {
+    return Object.entries(categoryVotes)
+      .map(([email, details]) => ({
+        email,
+        firstName: details.firstName,
+        count: details.count,
+      }))
+      .sort((a, b) => b.count - a.count); // Sort descending by votes
+  };
 
   if (loading) {
     return (
@@ -55,19 +71,30 @@ export default function Results() {
     );
   }
 
-  const sortCategoryVotes = (categoryVotes) => {
-    return Object.entries(categoryVotes)
-      .map(([email, details]) => ({
-        email,
-        firstName: details.firstName,
-        count: details.count,
-      }))
-      .sort((a, b) => b.count - a.count); // Sort descending by votes
-  };
-  
-
   const maleResults = sortCategoryVotes(results.male);
   const femaleResults = sortCategoryVotes(results.female);
+
+  const renderResults = (categoryResults) => (
+    <Card>
+      <CardContent>
+        {categoryResults.map(({ email, firstName, count }, index) => (
+          <Typography
+            key={email}
+            align="center"
+            style={{
+              fontWeight: index === 0 ? "bold" : "normal",
+              fontSize: index === 0 ? "1.5em" : "1.2em",
+              marginBottom: "0.5em",
+              color: index === 0 ? "#FFD700" : "#000", // Gold for 1st place
+            }}
+          >
+            {index + 1}. {firstName} ({email}): {count}{" "}
+            {count === 1 ? "vote" : "votes"}
+          </Typography>
+        ))}
+      </CardContent>
+    </Card>
+  );
 
   return (
     <Box
@@ -81,59 +108,20 @@ export default function Results() {
       <Typography variant="h4" align="center" gutterBottom>
         🎉 Leaderboard 🎉
       </Typography>
-      <Grid2 container spacing={4} justifyContent="center">
-        {/* Male Results */}
-        <Grid2 item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h5" align="center" gutterBottom>
-                Best Male Costume
-              </Typography>
-              {maleResults.map(({ email, firstName, count }, index) => (
-                <Typography
-                  key={email}
-                  align="center"
-                  style={{
-                    fontWeight: index === 0 ? "bold" : "normal",
-                    fontSize: index === 0 ? "1.5em" : "1.2em",
-                    marginBottom: "0.5em",
-                    color: index === 0 ? "#FFD700" : "#000", // Gold for 1st place
-                  }}
-                >
-                  {index + 1}. {firstName} ({email}): {count}{" "}
-                  {count === 1 ? "vote" : "votes"}
-                </Typography>
-              ))}
-            </CardContent>
-          </Card>
-        </Grid2>
 
-        {/* Female Results */}
-        <Grid2 item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h5" align="center" gutterBottom>
-                Best Female Costume
-              </Typography>
-              {femaleResults.map(({ email, firstName, count }, index) => (
-                <Typography
-                  key={email}
-                  align="center"
-                  style={{
-                    fontWeight: index === 0 ? "bold" : "normal",
-                    fontSize: index === 0 ? "1.5em" : "1.2em",
-                    marginBottom: "0.5em",
-                    color: index === 0 ? "#FFD700" : "#000", // Gold for 1st place
-                  }}
-                >
-                  {index + 1}. {firstName} ({email}): {count}{" "}
-                  {count === 1 ? "vote" : "votes"}
-                </Typography>
-              ))}
-            </CardContent>
-          </Card>
-        </Grid2>
-      </Grid2>
+      <Tabs
+        value={activeTab}
+        onChange={handleTabChange}
+        indicatorColor="primary"
+        textColor="primary"
+        centered
+      >
+        <Tab label="Male Results" />
+        <Tab label="Female Results" />
+      </Tabs>
+
+      {activeTab === 0 && renderResults(maleResults)}
+      {activeTab === 1 && renderResults(femaleResults)}
     </Box>
   );
 }

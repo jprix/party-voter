@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDynamicContext, useIsLoggedIn } from "@dynamic-labs/sdk-react-core";
 import { Button, Box, Typography } from "@mui/material";
-import VoteFlow from "../components/VoteFlow"; // Import the separate VoteFlow component
+import VoteFlow from "../components/VoteFlow";
+import Results from "../components/Results";
+import Waiting from "../components/Waiting"; // Import the Waiting component
+import QRCodePage from "./scan";
 
 export default function Home() {
   const { handleLogOut, setShowAuthFlow, isFullyConnected, user } = useDynamicContext();
   const isLoggedIn = useIsLoggedIn();
-  console.log("isLoggedIn", isLoggedIn, user);
+  const [showResults, setShowResults] = useState(false);
+
 
   const handleLoginClick = () => {
     console.log("handleLoginClick");
@@ -23,12 +27,14 @@ export default function Home() {
       width="100%"
       textAlign="center"
       padding={4}
+      bgcolor={isLoggedIn ? "#f9f9f9" : "white"}
     >
       {!isLoggedIn ? (
         <>
           <Typography variant="h4" gutterBottom>
             Welcome to the 2024 Annual Parisi Pajama Party
           </Typography>
+          <QRCodePage />
           <Typography variant="body1" gutterBottom>
             Please login to vote
           </Typography>
@@ -36,8 +42,12 @@ export default function Home() {
             Login
           </Button>
         </>
-      ) : (
+      ) : showResults ? (
         <VoteFlow voter={user} />
+        
+      ) : (
+        <Waiting setShowResults={setShowResults} />
+      
       )}
     </Box>
   );
